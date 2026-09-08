@@ -1,0 +1,156 @@
+const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+
+// Load environment variables
+dotenv.config();
+
+// Connect to MongoDB
+connectDB();
+
+const app = express();
+
+// ============================================
+// MIDDLEWARE
+// ============================================
+
+// Trust proxy (required for Render / production behind reverse proxy)
+app.set('trust proxy', 1);
+
+// CORS - allow frontend origin with credentials
+// Supports multiple origins for development + production
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.some((allowed) => origin.startsWith(allowed) || origin.includes('vercel.app'))) {
+        return callback(null, true);
+      }
+      callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
+
+// Parse JSON request bodies
+app.use(express.json({ limit: '10mb' }));
+
+// Parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+
+// Parse cookies
+app.use(cookieParser());
+
+// ============================================
+// ROUTES
+// ============================================
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  const mongoose = require('mongoose');
+  res.status(200).json({
+    success: true,
+    message: 'Dayflow HRMS API is running',
+    timestamp: new Date().toISOString(),
+    dbStatus: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+  });
+});
+
+// Auth routes
+app.use('/api/auth', require('./routes/authRoutes'));
+
+// Employee routes
+app.use('/api/employees', require('./routes/employeeRoutes'));
+
+// Dashboard routes
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+
+// Activity routes
+app.use('/api/activities', require('./routes/activityRoutes'));
+
+// Attendance routes
+app.use('/api/attendance', require('./routes/attendanceRoutes'));
+
+// Leave routes
+app.use('/api/leaves', require('./routes/leaveRoutes'));
+
+// Payroll routes
+app.use('/api/payroll', require('./routes/payrollRoutes'));
+
+// Notification routes
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+
+// Analytics routes
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
+
+// Settings routes
+app.use('/api/settings', require('./routes/settingsRoutes'));
+
+// Seed routes (demo data)
+app.use('/api/seed', require('./routes/seedRoutes'));
+
+// ============================================
+// ERROR HANDLING
+// ============================================
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: process.env.NODE_ENV === 'production'
+      ? 'Internal server error'
+      : err.message,
+  });
+});
+
+// ============================================
+// START SERVER
+// ============================================
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`
+  ╔═══════════════════════════════════════╗
+  ║   🌊 Dayflow HRMS API Server         ║
+  ║   Running on port ${PORT}              ║
+  ║   Environment: ${process.env.NODE_ENV || 'development'}       ║
+  ╚═══════════════════════════════════════╝
+  `);
+});
+
+// ============================================
+// KEEP ALIVE (Prevent Render free tier sleep)
+// ============================================
+if (process.env.NODE_ENV === 'production' && process.env.RENDER_EXTERNAL_URL) {
+  const https = require('https');
+  const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
+
+  setInterval(() => {
+    https.get(`${process.env.RENDER_EXTERNAL_URL}/api/health`, (res) => {
+      console.log(`🏓 Keep-alive ping: ${res.statusCode}`);
+    }).on('error', (err) => {
+      console.log('Keep-alive ping failed:', err.message);
+    });
+  }, PING_INTERVAL);
+
+  console.log('  🏓 Keep-alive pinger active (every 14 min)');
+}
