@@ -183,6 +183,16 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
+
+    // Missing / invalid JWT settings on the server (Render environment variables)
+    if (/secretOrPrivateKey|expiresIn/i.test(error.message || '')) {
+      return res.status(500).json({
+        success: false,
+        message:
+          'Server configuration error: JWT_SECRET, JWT_REFRESH_SECRET, JWT_EXPIRES_IN or JWT_REFRESH_EXPIRES_IN is missing or invalid on the server.',
+      });
+    }
+
     res.status(500).json({ success: false, message: 'Login failed. Please try again.' });
   }
 };

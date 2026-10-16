@@ -7,6 +7,13 @@ const connectDB = require('./config/db');
 // Load environment variables
 dotenv.config();
 
+// Warn (by name only) about missing required environment variables
+['MONGODB_URI', 'JWT_SECRET', 'JWT_REFRESH_SECRET'].forEach((name) => {
+  if (!process.env[name]) {
+    console.warn(`⚠️  Missing required environment variable: ${name}`);
+  }
+});
+
 // Connect to MongoDB
 connectDB();
 
@@ -62,6 +69,7 @@ app.get('/api/health', (req, res) => {
     message: 'Dayflow HRMS API is running',
     timestamp: new Date().toISOString(),
     dbStatus: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    jwtConfigured: Boolean(process.env.JWT_SECRET && process.env.JWT_REFRESH_SECRET),
   });
 });
 
