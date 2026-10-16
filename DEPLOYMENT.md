@@ -121,6 +121,9 @@ curl https://dayflow-api.onrender.com/api/health
 | Auth not working | Ensure both JWT secrets are set in Render |
 | Email not sending | Verify Gmail App Password (not regular password) |
 | Blank page on Vercel | Check `VITE_API_URL` is set correctly |
+| `Route not found: POST /auth/...` | `VITE_API_URL` must point to the backend (e.g. `https://dayflow-api.onrender.com/api`). After changing it, **Redeploy** on Vercel (env vars are baked in at build time). The app now adds `/api` automatically if it is missing |
+| OTP not showing on Sign Up | The OTP is shown on screen (no email needed). Check `<render-url>/api/health` shows `"dbStatus": "connected"` and that Vercel `VITE_API_URL` is correct |
+| Render: "Application exited early" | In Render settings use Root Directory `server`, Build Command `npm install`, Start Command `node index.js` |
 | Render sleeps (free) | First request takes ~30s to wake up (free tier limitation) |
 
 ---

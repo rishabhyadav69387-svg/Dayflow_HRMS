@@ -6,7 +6,24 @@ import axios from 'axios';
  * In development: proxied via Vite (/api -> localhost:5000)
  * In production: uses VITE_API_URL environment variable (Render backend URL)
  */
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const normalizeApiUrl = (rawUrl) => {
+  let url = (rawUrl || '/api').trim().replace(/\/+$/, '');
+
+  // Host without protocol (e.g. "dayflow-api.onrender.com") -> add https://
+  if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) {
+    url = `https://${url}`;
+  }
+
+  // Backend routes live under /api, so make sure the base URL ends with it
+  // (e.g. "https://dayflow-api.onrender.com" -> ".../api")
+  if (!/\/api$/i.test(url)) {
+    url = `${url}/api`;
+  }
+
+  return url;
+};
+
+const API_BASE_URL = normalizeApiUrl(import.meta.env.VITE_API_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
