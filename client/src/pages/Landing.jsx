@@ -193,10 +193,10 @@ const HeroSection = () => {
                 {/* Employee header */}
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-lg font-bold text-primary-600">SK</span>
+                    <span className="text-lg font-bold text-primary-600">AS</span>
                   </div>
                   <div>
-                    <p className="text-base font-bold text-gray-800">Shubham Kumar</p>
+                    <p className="text-base font-bold text-gray-800">Amit Sharma</p>
                     <p className="text-xs text-gray-500">Senior Software Engineer • Engineering</p>
                   </div>
                 </div>

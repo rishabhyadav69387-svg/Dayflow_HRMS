@@ -29,7 +29,7 @@
 ## Step 2: Deploy Backend on Render
 
 1. Go to [render.com](https://render.com) → New → **Web Service**
-2. Connect your GitHub repo: `shubhamshubham66/Dayflow_Human_Resource_MS`
+2. Connect your GitHub repo: `rishabhyadav69387-svg/Dayflow_HRMS`
 3. Configure:
    - **Name:** `dayflow-api`
    - **Root Directory:** `server`
@@ -66,7 +66,7 @@
 ## Step 3: Deploy Frontend on Vercel
 
 1. Go to [vercel.com](https://vercel.com) → New Project
-2. Import your GitHub repo: `shubhamshubham66/Dayflow_Human_Resource_MS`
+2. Import your GitHub repo: `rishabhyadav69387-svg/Dayflow_HRMS`
 3. Configure:
    - **Framework Preset:** Vite
    - **Root Directory:** `client`

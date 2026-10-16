@@ -22,7 +22,7 @@ A modern, full-stack HRMS built with React, Node.js, Express, and MongoDB. Desig
 ## 📁 Project Structure
 
 ```
-Dayflow_Human_Resource_MS/
+Dayflow_HRMS/
 ├── client/                    # React frontend
 │   ├── public/               # Static assets
 │   ├── src/
@@ -57,8 +57,8 @@ Dayflow_Human_Resource_MS/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/shubhamshubham66/Dayflow_Human_Resource_MS.git
-cd Dayflow_Human_Resource_MS
+git clone https://github.com/rishabhyadav69387-svg/Dayflow_HRMS.git
+cd Dayflow_HRMS
 ```
 
 ### 2. Set up the backend
