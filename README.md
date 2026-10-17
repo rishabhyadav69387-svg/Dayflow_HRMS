@@ -81,6 +81,26 @@ Navigate to `http://localhost:5173`
 
 ---
 
+## 🧪 Testing
+
+The backend has automated API tests written with **Jest** and **Supertest**. The database layer is mocked, so MongoDB is not needed to run them.
+
+```bash
+cd server
+npm install
+npm test
+```
+
+| Area | What is tested |
+|------|----------------|
+| `POST /api/auth/send-otp` | invalid email, already registered email, 6-digit OTP with 5-minute expiry |
+| `POST /api/auth/register` | missing / wrong / reused OTP, weak password, password mismatch, duplicate user, successful signup |
+| `POST /api/auth/login` | unknown email, wrong password, deactivated account, valid JWT + HTTP-only refresh cookie, missing JWT config |
+
+Tests live in `server/tests/`.
+
+---
+
 ## 🔐 Authentication Flow
 
 1. **Sign Up** → User registers with Employee ID, Name, Email, Password, Role
